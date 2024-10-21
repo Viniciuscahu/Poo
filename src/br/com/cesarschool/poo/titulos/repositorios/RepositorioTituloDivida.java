@@ -2,6 +2,12 @@ package br.com.cesarschool.poo.titulos.repositorios;
 
 import br.com.cesarschool.poo.titulos.entidades.Acao;
 import br.com.cesarschool.poo.titulos.entidades.TituloDivida;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Deve gravar em e ler de um arquivo texto chamado TituloDivida.txt os dados dos objetos do tipo
@@ -11,32 +17,130 @@ import br.com.cesarschool.poo.titulos.entidades.TituloDivida;
     2;EUA;2026-01-01;1.5
     3;FRANCA;2027-11-11;2.5 
  * 
- * A inclusão deve adicionar uma nova linha ao arquivo. Não é permitido incluir 
- * identificador repetido. Neste caso, o método deve retornar false. Inclusão com 
+ * A inclusï¿½o deve adicionar uma nova linha ao arquivo. Nï¿½o ï¿½ permitido incluir 
+ * identificador repetido. Neste caso, o mï¿½todo deve retornar false. Inclusï¿½o com 
  * sucesso, retorno true.
  * 
- * A alteração deve substituir a linha atual por uma nova linha. A linha deve ser 
- * localizada por identificador que, quando não encontrado, enseja retorno false. 
- * Alteração com sucesso, retorno true.  
+ * A alteraï¿½ï¿½o deve substituir a linha atual por uma nova linha. A linha deve ser 
+ * localizada por identificador que, quando nï¿½o encontrado, enseja retorno false. 
+ * Alteraï¿½ï¿½o com sucesso, retorno true.  
  *   
- * A exclusão deve apagar a linha atual do arquivo. A linha deve ser 
- * localizada por identificador que, quando não encontrado, enseja retorno false. 
- * Exclusão com sucesso, retorno true.
+ * A exclusï¿½o deve apagar a linha atual do arquivo. A linha deve ser 
+ * localizada por identificador que, quando nï¿½o encontrado, enseja retorno false. 
+ * Exclusï¿½o com sucesso, retorno true.
  * 
  * A busca deve localizar uma linha por identificador, materializar e retornar um 
- * objeto. Caso o identificador não seja encontrado no arquivo, retornar null.   
+ * objeto. Caso o identificador nï¿½o seja encontrado no arquivo, retornar null.   
  */
 public class RepositorioTituloDivida {
-	public boolean incluir(TituloDivida tituloDivida) {
-		return false;
+	Path arquivo = Paths.get("TituloDivida.txt");
+	public boolean adicionarTitulo(TituloDivida novoTitulo)
+	{
+		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
+			String linha;
+			while((linha = reader.readLine())!= null) {
+				String[] informacoesTitulo = linha.split(";");
+
+		if(informacoesTitulo[0].equals((String.valueOf(novoTitulo.getIdentificador())))) {
+			return false;
+		}
+			}
+		} catch (IOException e ) {
+			return false;
+		}
+		try(BufferedWriter writer = new BufferedWriter((new FileWriter(arquivo.toFile(), true)))) {
+			writer.write(novoTitulo.getIdentificador() + ";" + novoTitulo.getNome() + ";" + novoTitulo.getdataDeValidade() + ";" + novoTitulo.getTaxaJuros());
+			writer.newLine();
+			return true;
+		} catch (IOException e ) {
+			return false;
+		}
 	}
-	public boolean alterar(TituloDivida tituloDivida) {
-		return false;
+
+
+
+
+	public boolean atulizarTitulo(TituloDivida tituloAtualizado) {
+		List<String> informacoesAtualizadas = new ArrayList<>();
+		boolean encontrouTitulo = false;
+
+		try(BufferedReader reader  = new BufferedReader(new FileReader(arquivo.toFile()))) {
+			String linha;
+			while((linha = reader.readLine())!= null) {
+				String[] informacoesTitulo = linha.split(";");
+				if (informacoesTitulo[0].equals((String.valueOf(tituloAtualizado.getIdentificador())))) {
+						informacoesAtualizadas.add(tituloAtualizado.getIdentificador() + ";" + tituloAtualizado.getNome() + ";" + tituloAtualizado.getdataDeValidade() + ";" + tituloAtualizado.getTaxaJuros());
+						encontrouTitulo = true;
+			} else {
+					informacoesAtualizadas.add (linha);
+				}
+			}
+		} catch (Exception e) {
+			return false;
+		}
+
+		if(encontrouTitulo) {
+			try(BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile()))){
+				for(String linha : informacoesAtualizadas) {
+					writer.write(linha);
+					writer.newLine();
+				}
+				return true;
+
+			} catch (Exception e) {
+				return false;
+			}
+		}else{
+			return false;
+		}
 	}
-	public boolean excluir(int identificador) {
-		return false;
+
+
+	public boolean excluirTitulo(int identificador) {
+
+		List<String> linhasRestantes = new ArrayList<>();
+		boolean tituloRemovido = false;
+		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
+			String linha;
+			while((linha = reader.readLine())!= null) {
+				String[] informacoesTitulo = linha.split(";");
+				if(informacoesTitulo[0].equals((String.valueOf(identificador)))) {
+					linhasRestantes.add(linha);
+				} else{
+					tituloRemovido = true;
+				}
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		if(tituloRemovido) {
+			try(BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile()))) {
+				for(String linha : linhasRestantes) {
+					writer.write(linha);
+					writer.newLine();
+				}
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		}else {
+			return false;
+		}
 	}
-	public Acao buscar(int identificador) {
+
+
+	public Acao buscarTitulo(int identificador) {
+		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
+			String linha;
+			while((linha = reader.readLine())!= null) {
+				String[] informacoesTitulo = linha.split(";");
+				if(informacoesTitulo[0].equals((String.valueOf(identificador)))) {
+					return new Acao(Integer.parseInt(informacoesTitulo[0]), String.valueOf(informacoesTitulo[1]), LocalDateTime.parse(informacoesTitulo[2]), Double.parseDouble(informacoesTitulo[3]));
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

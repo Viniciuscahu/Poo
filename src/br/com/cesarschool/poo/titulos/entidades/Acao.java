@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Acao extends Ativo {
 	private double valorUnitario;
 	
-	public Acao(int identificador, Sring nome, LocalDateTime dataDeValidade, double valorUnitario) {
+	public Acao(int identificador, String nome, LocalDateTime dataDeValidade, double valorUnitario) {
 		super(identificador, nome, dataDeValidade);
 		this.valorUnitario = valorUnitario;
 	}

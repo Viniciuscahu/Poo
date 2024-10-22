@@ -1,13 +1,10 @@
 package br.com.cesarschool.poo.titulos.repositorios;
-
 import br.com.cesarschool.poo.titulos.entidades.Acao;
-
 import java.io.*;
 import java.nio.file.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 /*
  * Deve gravar em e ler de um arquivo texto chamado Acao.txt os dados dos objetos do tipo
  * Acao. Seguem abaixo exemplos de linhas (identificador, nome, dataValidade, valorUnitario)
@@ -32,117 +29,113 @@ import java.util.List;
  * objeto. Caso o identificador n�o seja encontrado no arquivo, retornar null.   
  */
 public class RepositorioAcao {
-	Path arquivo = Paths.get("Acao.txt");
 
-	public boolean incluir(Acao acao) {
-		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-			String linha;
-			while((linha = reader.readLine()) != null) {
-				String[] informacoes = linha.split(";");
-				if(informacoes[0].equals(String.valueOf(acao.getNome()))) {
-					return false;
-				}
+	private static final String FILE_NAME = "Acao.txt";
+
+
+	public boolean incluir(Acao acao) throws IOException {
+		List<Acao> acoes = listarAcoes();
+
+		for (Acao a : acoes) {
+			if (a.getIdentificador() == acao.getIdentificador()) {
+				return false;
 			}
-		}catch (IOException e) {
-			return false;
 		}
 
-		try(BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile(), true))){
-			writer.write(acao.getIdentificador() + ";" + acao.getNome() + ";" + acao.getDataDeValidade() + ";" + acao.getValorUnitario());
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+			writer.write(formatAcao(acao));
 			writer.newLine();
-			return true;
-		} catch (IOException e) {
-			return false;
 		}
+		return true;
 	}
 
 
-
-
-	public boolean alterar(Acao acao) {
-		List<String> novasLinhas = new ArrayList<>();
-
-		boolean troca = false;
-
-		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-			String linha;
-			while((linha = reader.readLine()) != null) {
-				String[] informacoes = linha.split(";");
-				if(informacoes[0].equals(String.valueOf(acao.getIdentificador()))) {
-					troca = true;
-				}else{
-					novasLinhas.add(linha);
-				}
+	public boolean alterar(Acao acao) throws IOException {
+		List<Acao> acoes = listarAcoes();
+		boolean encontrado = false;
+		for (int i = 0; i < acoes.size(); i++) {
+			if (acoes.get(i).getIdentificador() == acao.getIdentificador()) {
+				acoes.set(i, acao);
+				encontrado = true;
+				break;
 			}
-			}catch (Exception e) {
+		}
+		if (!encontrado) {
 			return false;
 		}
-		if(troca == true) {
-			try(BufferedWriter escritor = new BufferedWriter(new FileWriter(arquivo.toFile()))) {
-				for(String linha : novasLinhas) {
-					escritor.write(linha);
-					escritor.newLine();
-
-
-				}
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
-		}else {
-			return false;
-		}
+		salvarAcoes(acoes);
+		return true;
 	}
 
-
-
-	public boolean excluir(int identificador) {
-		List <String> novasLinhas = new ArrayList<>();
-
-		boolean apagado = false;
-
-		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-			String linha;
-			while((linha = reader.readLine())!= null) {
-				String[] informacoes = linha.split(";");
-				if(informacoes[0].equals(String.valueOf(identificador)) == false) {
-					novasLinhas.add(linha);
-				}else{
-					apagado = true;
-				}
-			}
-		} catch (IOException e) {
-			return false;
-		}
-		if(apagado == true) {
-			try(BufferedWriter escrever = new BufferedWriter(new FileWriter(arquivo.toFile()))) {
-				for(String linha : novasLinhas) {
-					escrever.write(linha);
-					escrever.newLine();
-				}
-				return true;
-			}catch (Exception e) {
-				return false;
+	public boolean excluir(int identificador) throws IOException {
+		List<Acao> acoes = listarAcoes();
+		boolean encontrado = false;
+		Iterator<Acao> iterator = acoes.iterator();
+		while (iterator.hasNext()) {
+			Acao acao = iterator.next();
+			if (acao.getIdentificador() == identificador) {
+				iterator.remove();
+				encontrado = true;
+				break;
 			}
 		}
-		else {
+		if (!encontrado) {
 			return false;
 		}
+		salvarAcoes(acoes);
+		return true;
 	}
 
-
-	public Acao buscar(int identificador) {
-		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-			String linha;
-			while ((linha = reader.readLine())!= null) {
-				String[] informacoes = linha.split(";");
-				if(informacoes[0].equals(String.valueOf(identificador)) == true) {
-					return new Acao(Integer.parseInt(informacoes[0]), informacoes[1], LocalDate.parse(informacoes[2]), Double.parseDouble(informacoes[3]));
-				}
+	public Acao buscar(int identificador) throws IOException {
+		List<Acao> acoes = listarAcoes();
+		for (Acao acao : acoes) {
+			if (acao.getIdentificador() == identificador) {
+				return acao;
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private List<Acao> listarAcoes() throws IOException {
+		List<Acao> acoes = new ArrayList<>();
+		Path path = Paths.get(FILE_NAME);
+		if (!Files.exists(path)) {
+			return acoes;
+		}
+		try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+			String linha;
+			while ((linha = reader.readLine()) != null) {
+				Acao acao = parseAcao(linha);
+				if (acao != null) {
+					acoes.add(acao);
+				}
+			}
+		}
+		return acoes;
+	}
+
+	private void salvarAcoes(List<Acao> acoes) throws IOException {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+			for (Acao acao : acoes) {
+				writer.write(formatAcao(acao));
+				writer.newLine();
+			}
+		}
+	}
+
+	private String formatAcao(Acao acao) {
+		return acao.getIdentificador() + ";" + acao.getNome() + ";" + acao.getDataDeValidade() + ";" + acao.getValorUnitario();
+	}
+
+	private Acao parseAcao(String linha) {
+		String[] partes = linha.split(";");
+		if (partes.length != 4) {
+			return null;
+		}
+		int identificador = Integer.parseInt(partes[0]);
+		String nome = partes[1];
+		LocalDate dataDeValidade = LocalDate.parse(partes[2]);
+		double valorUnitario = Double.parseDouble(partes[3]);
+		return new Acao(identificador, nome, dataDeValidade, valorUnitario);
 	}
 }

@@ -3,8 +3,7 @@ import br.com.cesarschool.poo.titulos.entidades.EntidadeOperadora;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /*
  * Deve gravar em e ler de um arquivo texto chamado Acao.txt os dados dos objetos do tipo
@@ -31,99 +30,113 @@ import java.util.List;
  */
 public class RepositorioEntidadeOperadora {
 
-    private final Path arquivo = Paths.get("EntidadeOperacao.txt");
+    private static final String FILE_NAME = "EntidadeOperadora.txt";
 
-    public boolean incluir(EntidadeOperadora entidadeOperadora) {
-        if (buscar(entidadeOperadora.getIdentificador()) != null) {
-            return false;
+    public boolean incluir(EntidadeOperadora entidade) throws IOException {
+        List<EntidadeOperadora> entidades = listarEntidades();
+        for (EntidadeOperadora e : entidades) {
+            if (e.getIdentificador() == entidade.getIdentificador()) {
+                return false;
+            }
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile(), true))) {
-            writer.write(entidadeOperadora.getIdentificador() + ";" + entidadeOperadora.getNome() + ";" + entidadeOperadora.getAutorizadoAcao());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+            writer.write(formatEntidade(entidade));
             writer.newLine();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
         }
+        return true;
     }
 
-    public boolean alterar(EntidadeOperadora entidadeOperadora) {
-        List<String> linhasNovas = new ArrayList<>();
-        boolean encontrada = false;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                String[] dados = linha.split(";");
-                if (dados[0].equals(String.valueOf(entidadeOperadora.getIdentificador()))) {
-                    linhasNovas.add(entidadeOperadora.getIdentificador() + ";" + entidadeOperadora.getNome() + ";" + entidadeOperadora.getAutorizadoAcao());
-                    encontrada = true;
-                } else {
-                    linhasNovas.add(linha);
-                }
+    public boolean alterar(EntidadeOperadora entidade) throws IOException {
+        List<EntidadeOperadora> entidades = listarEntidades();
+        boolean encontrado = false;
+        for (int i = 0; i < entidades.size(); i++) {
+            if (entidades.get(i).getIdentificador() == entidade.getIdentificador()) {
+                entidades.set(i, entidade);
+                encontrado = true;
+                break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        if (!encontrado) {
             return false;
         }
 
-        if (encontrada) {
-            return reescreverArquivo(linhasNovas);
-        }
-        return false;
+        salvarEntidades(entidades);
+        return true;
     }
 
-    public boolean excluir(long identificador) {
-        List<String> linhasNovas = new ArrayList<>();
-        boolean encontrada = false;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                String[] dados = linha.split(";");
-                if (!dados[0].equals(String.valueOf(identificador))) {
-                    linhasNovas.add(linha);
-                } else {
-                    encontrada = true;
-                }
+    public boolean excluir(long identificador) throws IOException {
+        List<EntidadeOperadora> entidades = listarEntidades();
+        boolean encontrado = false;
+        Iterator<EntidadeOperadora> iterator = entidades.iterator();
+        while (iterator.hasNext()) {
+            EntidadeOperadora entidade = iterator.next();
+            if (entidade.getIdentificador() == identificador) {
+                iterator.remove();
+                encontrado = true;
+                break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        if (!encontrado) {
             return false;
         }
 
-        if (encontrada) {
-            return reescreverArquivo(linhasNovas);
-        }
-        return false;
+        salvarEntidades(entidades);
+        return true;
     }
 
-    public EntidadeOperadora buscar(long identificador) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                String[] dados = linha.split(";");
-                if (dados[0].equals(String.valueOf(identificador))) {
-                    return new EntidadeOperadora(Long.parseLong(dados[0]), dados[1], Double.parseDouble(dados[2]));
-                }
+    public EntidadeOperadora buscar(long identificador) throws IOException {
+        List<EntidadeOperadora> entidades = listarEntidades();
+        for (EntidadeOperadora entidade : entidades) {
+            if (entidade.getIdentificador() == identificador) {
+                return entidade;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return null;
     }
 
-    private boolean reescreverArquivo(List<String> linhasNovas) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile()))) {
-            for (String linha : linhasNovas) {
-                writer.write(linha);
+    private List<EntidadeOperadora> listarEntidades() throws IOException {
+        List<EntidadeOperadora> entidades = new ArrayList<>();
+        Path path = Paths.get(FILE_NAME);
+        if (!Files.exists(path)) {
+            return entidades;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+            String linha;
+            while ((linha = reader.readLine()) != null) {
+                EntidadeOperadora entidade = parseEntidade(linha);
+                if (entidade != null) {
+                    entidades.add(entidade);
+                }
+            }
+        }
+        return entidades;
+    }
+
+    private void salvarEntidades(List<EntidadeOperadora> entidades) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            for (EntidadeOperadora entidade : entidades) {
+                writer.write(formatEntidade(entidade));
                 writer.newLine();
             }
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
         }
+    }
+
+    private String formatEntidade(EntidadeOperadora entidade) {
+        return entidade.getIdentificador() + ";" + entidade.getNome() + ";" + entidade.getAutorizadoAcao() + ";" +
+                entidade.getSaldoAcao() + ";" + entidade.getSaldoTituloDivida();
+    }
+
+    private EntidadeOperadora parseEntidade(String linha) {
+        String[] partes = linha.split(";");
+        if (partes.length != 5) {
+            return null;
+        }
+        long identificador = Long.parseLong(partes[0]);
+        String nome = partes[1];
+        boolean autorizadoAcao = Boolean.parseBoolean(partes[2]);
+        double saldoAcao = Double.parseDouble(partes[3]);
+        double saldoTituloDivida = Double.parseDouble(partes[4]);
+        return new EntidadeOperadora(identificador, nome, autorizadoAcao);
     }
 }

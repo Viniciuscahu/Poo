@@ -19,19 +19,20 @@ package br.com.cesarschool.poo.titulos.entidades;
  *  void debitarSaldoAcao(double valor): deve diminuir valor de saldoAcao
  *  void creditarSaldoTituloDivida(double valor): deve adicionar valor ao saldoTituloDivida
  *  void debitarSaldoTituloDivida(double valor): deve diminuir valor de saldoTituloDivida
- */public class EntidadeOperadora {
+ */
+public class EntidadeOperadora {
 
-    private long identificador;
+    private final long identificador;
     private String nome;
     private boolean autorizadoAcao;
     private double saldoAcao;
     private double saldoTituloDivida;
 
-    public EntidadeOperadora(long identificador, String nome, double saldoAcao) {
+    public EntidadeOperadora(long identificador, String nome, boolean autorizadoAcao) {
         this.identificador = identificador;
         this.nome = nome;
         this.autorizadoAcao = false;
-        this.saldoAcao = saldoAcao;
+        this.saldoAcao = 0;
         this.saldoTituloDivida = 0;
     }
 
@@ -41,6 +42,10 @@ package br.com.cesarschool.poo.titulos.entidades;
 
     public String getNome() {
         return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public boolean getAutorizadoAcao() {

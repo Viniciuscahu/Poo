@@ -3,13 +3,14 @@ package br.com.cesarschool.poo.titulos.mediators;
 import br.com.cesarschool.poo.titulos.entidades.EntidadeOperadora;
 import br.com.cesarschool.poo.titulos.repositorios.RepositorioEntidadeOperadora;
 
-public class MediatorEntidadeOperadora {
-    private static MediatorEntidadeOperadora instancia;
-    private final RepositorioEntidadeOperadora repositorioEntidadeOperadora = new RepositorioEntidadeOperadora();
+import java.io.IOException;
 
-    private MediatorEntidadeOperadora() {
-        // Construtor privado para singleton
-    }
+public class MediatorEntidadeOperadora {
+
+    private static MediatorEntidadeOperadora instancia;
+    private static final RepositorioEntidadeOperadora repositorioEntidadeOperadora = new RepositorioEntidadeOperadora();
+
+    private MediatorEntidadeOperadora() { }
 
     public static MediatorEntidadeOperadora getInstancia() {
         if (instancia == null) {
@@ -28,39 +29,70 @@ public class MediatorEntidadeOperadora {
         if (entidade.getNome().length() < 5 || entidade.getNome().length() > 60) {
             return "Nome deve ter entre 5 e 60 caracteres.";
         }
-        return null; // Entidade válida
+        return null;
     }
 
     public String incluir(EntidadeOperadora entidade) {
         String validacao = validar(entidade);
         if (validacao != null) {
-            return validacao; // Se a validação falhar, retorna a mensagem de erro
+            return validacao;
         }
-        boolean sucesso = repositorioEntidadeOperadora.incluir(entidade);
-        return sucesso ? null : "Entidade já existente";
+        try {
+            boolean incluido = repositorioEntidadeOperadora.incluir(entidade);
+            if (incluido) {
+                return null;
+            } else {
+                return "Entidade já existente.";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Erro de I/O ao incluir a entidade.";
+        }
     }
 
     public String alterar(EntidadeOperadora entidade) {
         String validacao = validar(entidade);
         if (validacao != null) {
-            return validacao; // Se a validação falhar, retorna a mensagem de erro
+            return validacao;
         }
-        boolean sucesso = repositorioEntidadeOperadora.alterar(entidade);
-        return sucesso ? null : "Entidade inexistente";
+        try {
+            boolean alterado = repositorioEntidadeOperadora.alterar(entidade);
+            if (alterado) {
+                return null;
+            } else {
+                return "Entidade inexistente.";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Erro de I/O ao alterar a entidade.";
+        }
     }
-
     public String excluir(long identificador) {
         if (identificador <= 100 || identificador >= 1000000) {
             return "Identificador deve estar entre 100 e 1000000.";
         }
-        boolean sucesso = repositorioEntidadeOperadora.excluir(identificador);
-        return sucesso ? null : "Entidade inexistente";
+        try {
+            boolean excluido = repositorioEntidadeOperadora.excluir(identificador);
+            if (excluido) {
+                return null;
+            } else {
+                return "Entidade inexistente.";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Erro de I/O ao excluir a entidade.";
+        }
     }
 
     public EntidadeOperadora buscar(long identificador) {
         if (identificador <= 100 || identificador >= 1000000) {
-            return null; // Identificador inválido
+            return null;
         }
-        return repositorioEntidadeOperadora.buscar(identificador);
+        try {
+            return repositorioEntidadeOperadora.buscar(identificador);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

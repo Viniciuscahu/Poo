@@ -8,20 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 /*
  * Deve gravar em e ler de um arquivo texto chamado Transacao.txt os dados dos objetos do tipo
- * Transacao. Seguem abaixo exemplos de linhas 
+ * Transacao. Seguem abaixo exemplos de linhas
  * De entidadeCredito: identificador, nome, autorizadoAcao, saldoAcao, saldoTituloDivida.
  * De entidadeDebito: identificador, nome, autorizadoAcao, saldoAcao, saldoTituloDivida.
  * De acao: identificador, nome, dataValidade, valorUnitario OU null
- * De tituloDivida: identificador, nome, dataValidade, taxaJuros OU null. 
+ * De tituloDivida: identificador, nome, dataValidade, taxaJuros OU null.
  * valorOperacao, dataHoraOperacao
- * 
- *   002192;BCB;true;0.00;1890220034.0;001112;BOFA;true;12900000210.00;3564234127.0;1;PETROBRAS;2024-12-12;30.33;null;100000.0;2024-01-01 12:22:21 
+ *
+ *   002192;BCB;true;0.00;1890220034.0;001112;BOFA;true;12900000210.00;3564234127.0;1;PETROBRAS;2024-12-12;30.33;null;100000.0;2024-01-01 12:22:21
  *   002192;BCB;false;0.00;1890220034.0;001112;BOFA;true;12900000210.00;3564234127.0;null;3;FRANCA;2027-11-11;2.5;100000.0;2024-01-01 12:22:21
  *
- * A inclus�o deve adicionar uma nova linha ao arquivo. 
- * 
+ * A inclus�o deve adicionar uma nova linha ao arquivo.
+ *
  * A busca deve retornar um array de transa��es cuja entidadeCredito tenha identificador igual ao
- * recebido como par�metro.  
+ * recebido como par�metro.
  */
 public class RepositorioTransacao {
 
@@ -54,8 +54,25 @@ public class RepositorioTransacao {
 			return transacoes.toArray(new Transacao[0]);
 		}
 
+	public Transacao[] buscarPorEntidadeDevedora(long identificadorEntidadeDebito) {
+		List<Transacao> transacoes = new ArrayList<>();
+		try (BufferedReader reader = new BufferedReader(new FileReader(NOME_ARQUIVO))) {
+			String linha;
+			while ((linha = reader.readLine()) != null) {
+				Transacao transacao = parseTransacao(linha);
+				if (transacao.getEntidadeDebito().getIdentificador() == identificadorEntidadeDebito) {
+					transacoes.add(transacao);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return transacoes.toArray(new Transacao[0]);
+	}
 
-		private String formatarTransacao(Transacao transacao) {
+
+
+	private String formatarTransacao(Transacao transacao) {
 			return transacao.getEntidadeCredito().getIdentificador() + ";" +
 					transacao.getEntidadeCredito().getNome() + ";" +
 					transacao.getEntidadeDebito().getIdentificador() + ";" +

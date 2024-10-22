@@ -35,54 +35,52 @@ import java.util.List;
  */
 public class RepositorioTituloDivida {
 	Path arquivo = Paths.get("TituloDivida.txt");
-	public boolean adicionarTitulo(TituloDivida novoTitulo)
-	{
-		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
+
+	public boolean adicionarTitulo(TituloDivida novoTitulo) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
 			String linha;
-			while((linha = reader.readLine())!= null) {
+			while ((linha = reader.readLine()) != null) {
 				String[] informacoesTitulo = linha.split(";");
 
-		if(informacoesTitulo[0].equals((String.valueOf(novoTitulo.getIdentificador())))) {
-			return false;
-		}
+				if (informacoesTitulo[0].equals((String.valueOf(novoTitulo.getIdentificador())))) {
+					return false;
+				}
 			}
-		} catch (IOException e ) {
+		} catch (IOException e) {
 			return false;
 		}
-		try(BufferedWriter writer = new BufferedWriter((new FileWriter(arquivo.toFile(), true)))) {
+		try (BufferedWriter writer = new BufferedWriter((new FileWriter(arquivo.toFile(), true)))) {
 			writer.write(novoTitulo.getIdentificador() + ";" + novoTitulo.getNome() + ";" + novoTitulo.getDataDeValidade() + ";" + novoTitulo.getTaxaJuros());
 			writer.newLine();
 			return true;
-		} catch (IOException e ) {
+		} catch (IOException e) {
 			return false;
 		}
 	}
-
-
 
 
 	public boolean atulizarTitulo(TituloDivida tituloAtualizado) {
 		List<String> informacoesAtualizadas = new ArrayList<>();
 		boolean encontrouTitulo = false;
 
-		try(BufferedReader reader  = new BufferedReader(new FileReader(arquivo.toFile()))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
 			String linha;
-			while((linha = reader.readLine())!= null) {
+			while ((linha = reader.readLine()) != null) {
 				String[] informacoesTitulo = linha.split(";");
 				if (informacoesTitulo[0].equals((String.valueOf(tituloAtualizado.getIdentificador())))) {
-						informacoesAtualizadas.add(tituloAtualizado.getIdentificador() + ";" + tituloAtualizado.getNome() + ";" + tituloAtualizado.getDataDeValidade() + ";" + tituloAtualizado.getTaxaJuros());
-						encontrouTitulo = true;
-			} else {
-					informacoesAtualizadas.add (linha);
+					informacoesAtualizadas.add(tituloAtualizado.getIdentificador() + ";" + tituloAtualizado.getNome() + ";" + tituloAtualizado.getDataDeValidade() + ";" + tituloAtualizado.getTaxaJuros());
+					encontrouTitulo = true;
+				} else {
+					informacoesAtualizadas.add(linha);
 				}
 			}
 		} catch (Exception e) {
 			return false;
 		}
 
-		if(encontrouTitulo) {
-			try(BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile()))){
-				for(String linha : informacoesAtualizadas) {
+		if (encontrouTitulo) {
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile()))) {
+				for (String linha : informacoesAtualizadas) {
 					writer.write(linha);
 					writer.newLine();
 				}
@@ -91,7 +89,7 @@ public class RepositorioTituloDivida {
 			} catch (Exception e) {
 				return false;
 			}
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -101,22 +99,22 @@ public class RepositorioTituloDivida {
 
 		List<String> linhasRestantes = new ArrayList<>();
 		boolean tituloRemovido = false;
-		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
 			String linha;
-			while((linha = reader.readLine())!= null) {
+			while ((linha = reader.readLine()) != null) {
 				String[] informacoesTitulo = linha.split(";");
-				if(informacoesTitulo[0].equals((String.valueOf(identificador)))) {
+				if (informacoesTitulo[0].equals((String.valueOf(identificador)))) {
 					linhasRestantes.add(linha);
-				} else{
+				} else {
 					tituloRemovido = true;
 				}
 			}
 		} catch (IOException e) {
 			return false;
 		}
-		if(tituloRemovido) {
-			try(BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile()))) {
-				for(String linha : linhasRestantes) {
+		if (tituloRemovido) {
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile()))) {
+				for (String linha : linhasRestantes) {
 					writer.write(linha);
 					writer.newLine();
 				}
@@ -124,19 +122,24 @@ public class RepositorioTituloDivida {
 			} catch (Exception e) {
 				return false;
 			}
-		}else {
+		} else {
 			return false;
 		}
 	}
 
 
-	public Acao buscarTitulo(int identificador) {
-		try(BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
+	public TituloDivida buscarTitulo(int identificador) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
 			String linha;
-			while((linha = reader.readLine())!= null) {
+			while ((linha = reader.readLine()) != null) {
 				String[] informacoesTitulo = linha.split(";");
-				if(informacoesTitulo[0].equals((String.valueOf(identificador)))) {
-					return new Acao(Integer.parseInt(informacoesTitulo[0]), String.valueOf(informacoesTitulo[1]), LocalDate.parse(informacoesTitulo[2]), Double.parseDouble(informacoesTitulo[3]));
+				if (informacoesTitulo[0].equals(String.valueOf(identificador))) {
+					return new TituloDivida(
+							Integer.parseInt(informacoesTitulo[0]),
+							informacoesTitulo[1],
+							LocalDate.parse(informacoesTitulo[2]),
+							Double.parseDouble(informacoesTitulo[3])
+					);
 				}
 			}
 		} catch (IOException e) {

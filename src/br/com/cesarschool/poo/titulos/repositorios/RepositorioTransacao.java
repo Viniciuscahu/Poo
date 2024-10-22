@@ -1,5 +1,5 @@
 package br.com.cesarschool.poo.titulos.repositorios;
-
+import br.com.cesarschool.poo.titulos.entidades.EntidadeOperadora;
 import br.com.cesarschool.poo.titulos.entidades.Transacao;
 import java.io.*;
 import java.time.LocalDateTime;
@@ -38,7 +38,6 @@ public class RepositorioTransacao {
 			}
 		}
 
-        /
 		public Transacao[] buscarPorEntidadeCredora(long identificadorEntidadeCredito) {
 			List<Transacao> transacoes = new ArrayList<>();
 			try (BufferedReader reader = new BufferedReader(new FileReader(NOME_ARQUIVO))) {
@@ -82,4 +81,4 @@ public class RepositorioTransacao {
 	}
 
 
-}
+

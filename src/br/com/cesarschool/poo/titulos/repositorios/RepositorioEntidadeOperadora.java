@@ -1,4 +1,6 @@
 package br.com.cesarschool.poo.titulos.repositorios;
+import br.com.cesarschool.poo.titulos.entidades.EntidadeOperadora;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;

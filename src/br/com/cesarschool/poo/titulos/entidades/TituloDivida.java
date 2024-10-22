@@ -1,4 +1,5 @@
 package br.com.cesarschool.poo.titulos.entidades;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 /*
  * Esta classe deve herdar de Ativo.
@@ -13,11 +14,13 @@ import java.time.LocalDateTime;
  */
 public class TituloDivida extends Ativo {
 	private double taxaJuros;
-	
-	public TituloDivida(int identificador, String nome, LocalDateTime dataDeValidade, double taxaJuros) {
+
+
+	public TituloDivida(int identificador, String nome, LocalDate dataDeValidade, double taxaJuros) {
 		super(identificador, nome, dataDeValidade);
 		this.taxaJuros = taxaJuros;
 	}
+
 	public double getTaxaJuros() {
 		return taxaJuros;
 	}
@@ -25,8 +28,8 @@ public class TituloDivida extends Ativo {
 	public void setTaxaJuros(double taxaJuros) {
 		this.taxaJuros = taxaJuros;
 	}
-	
-	public double calcularPrecoTransicao(double montante) {
-		return montante * (1 - taxaJuros/100.0);
+
+	public double calcularPrecoTransacao(double montante) {
+		return montante * (1 - taxaJuros / 100.0);
 	}
 }

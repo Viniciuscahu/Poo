@@ -4,6 +4,7 @@ import br.com.cesarschool.poo.titulos.entidades.Acao;
 
 import java.io.*;
 import java.nio.file.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class RepositorioAcao {
 		}
 
 		try(BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile(), true))){
-			writer.write(acao.getIdentificador() + ";" +acao.getNome()+ ";" +acao.getdataDeValidade()+ ";" +acao.getValorUnitario());
+			writer.write(acao.getIdentificador() + ";" + acao.getNome() + ";" + acao.getDataDeValidade() + ";" + acao.getValorUnitario());
 			writer.newLine();
 			return true;
 		} catch (IOException e) {
@@ -136,7 +137,7 @@ public class RepositorioAcao {
 			while ((linha = reader.readLine())!= null) {
 				String[] informacoes = linha.split(";");
 				if(informacoes[0].equals(String.valueOf(identificador)) == true) {
-					return new Acao(Integer.parseInt(informacoes[0]), informacoes[1], LocalDateTime.parse(informacoes[2]), Double.parseDouble(informacoes[3]));
+					return new Acao(Integer.parseInt(informacoes[0]), informacoes[1], LocalDate.parse(informacoes[2]), Double.parseDouble(informacoes[3]));
 				}
 			}
 		} catch (IOException e) {

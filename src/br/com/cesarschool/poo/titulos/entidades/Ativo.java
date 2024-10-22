@@ -1,4 +1,5 @@
 package br.com.cesarschool.poo.titulos.entidades;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 /*
  * Esta classe deve ter os seguintes atributos:
@@ -11,11 +12,11 @@ import java.time.LocalDateTime;
  * � read-only fora da classe.
  */
 public class Ativo {
-	private int identificador;
+	private final int identificador;
 	private String nome;
-	private LocalDateTime dataDeValidade;
-	
-	public Ativo(int identificador, String nome, LocalDateTime dataDeValidade) {
+	private LocalDate dataDeValidade;
+
+	public Ativo(int identificador, String nome, LocalDate dataDeValidade) {
 		this.identificador = identificador;
 		this.nome = nome;
 		this.dataDeValidade = dataDeValidade;
@@ -23,7 +24,7 @@ public class Ativo {
 
 	public int getIdentificador() {
 		return identificador;
-		}
+	}
 
 	public String getNome() {
 		return nome;
@@ -33,11 +34,12 @@ public class Ativo {
 		this.nome = nome;
 	}
 
-	public LocalDateTime getdataDeValidade() {
+	public LocalDate getDataDeValidade() {
 		return dataDeValidade;
 	}
 
-	public void setDataDeValidade(LocalDateTime dataDeValidade) {
+	public void setDataDeValidade(LocalDate dataDeValidade) {
 		this.dataDeValidade = dataDeValidade;
 	}
 }
+

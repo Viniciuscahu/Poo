@@ -5,6 +5,7 @@ import br.com.cesarschool.poo.titulos.entidades.TituloDivida;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class RepositorioTituloDivida {
 			return false;
 		}
 		try(BufferedWriter writer = new BufferedWriter((new FileWriter(arquivo.toFile(), true)))) {
-			writer.write(novoTitulo.getIdentificador() + ";" + novoTitulo.getNome() + ";" + novoTitulo.getdataDeValidade() + ";" + novoTitulo.getTaxaJuros());
+			writer.write(novoTitulo.getIdentificador() + ";" + novoTitulo.getNome() + ";" + novoTitulo.getDataDeValidade() + ";" + novoTitulo.getTaxaJuros());
 			writer.newLine();
 			return true;
 		} catch (IOException e ) {
@@ -69,7 +70,7 @@ public class RepositorioTituloDivida {
 			while((linha = reader.readLine())!= null) {
 				String[] informacoesTitulo = linha.split(";");
 				if (informacoesTitulo[0].equals((String.valueOf(tituloAtualizado.getIdentificador())))) {
-						informacoesAtualizadas.add(tituloAtualizado.getIdentificador() + ";" + tituloAtualizado.getNome() + ";" + tituloAtualizado.getdataDeValidade() + ";" + tituloAtualizado.getTaxaJuros());
+						informacoesAtualizadas.add(tituloAtualizado.getIdentificador() + ";" + tituloAtualizado.getNome() + ";" + tituloAtualizado.getDataDeValidade() + ";" + tituloAtualizado.getTaxaJuros());
 						encontrouTitulo = true;
 			} else {
 					informacoesAtualizadas.add (linha);
@@ -135,7 +136,7 @@ public class RepositorioTituloDivida {
 			while((linha = reader.readLine())!= null) {
 				String[] informacoesTitulo = linha.split(";");
 				if(informacoesTitulo[0].equals((String.valueOf(identificador)))) {
-					return new Acao(Integer.parseInt(informacoesTitulo[0]), String.valueOf(informacoesTitulo[1]), LocalDateTime.parse(informacoesTitulo[2]), Double.parseDouble(informacoesTitulo[3]));
+					return new Acao(Integer.parseInt(informacoesTitulo[0]), String.valueOf(informacoesTitulo[1]), LocalDate.parse(informacoesTitulo[2]), Double.parseDouble(informacoesTitulo[3]));
 				}
 			}
 		} catch (IOException e) {

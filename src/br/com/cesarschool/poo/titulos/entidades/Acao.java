@@ -22,6 +22,7 @@ public class Acao extends Ativo {
 	public double getValorUnitario() {
 		return valorUnitario;
 	}
+
 	public void setValorUnitario(double valorUnitario) {
 		this.valorUnitario = valorUnitario;
 	}

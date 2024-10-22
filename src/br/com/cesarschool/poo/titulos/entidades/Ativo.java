@@ -20,18 +20,23 @@ public class Ativo {
 		this.nome = nome;
 		this.dataDeValidade = dataDeValidade;
 	}
+
 	public int getIdentificador() {
 		return identificador;
-	} 
+		}
+
 	public String getNome() {
 		return nome;
 	}
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+
 	public LocalDateTime getdataDeValidade() {
 		return dataDeValidade;
 	}
+
 	public void setDataDeValidade(LocalDateTime dataDeValidade) {
 		this.dataDeValidade = dataDeValidade;
 	}

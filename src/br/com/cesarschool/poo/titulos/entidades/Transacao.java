@@ -1,4 +1,5 @@
 package br.com.cesarschool.poo.titulos.entidades;
+import java.time.LocalDateTime;
 /*
  * Esta classe deve ter os seguintes atributos:
  * entidadeCredito, do tipo EntidadeOperadora
@@ -14,7 +15,6 @@ package br.com.cesarschool.poo.titulos.entidades;
  *
  *
  */
-import java.time.LocalDateTime;
 
 public class Transacao {
 

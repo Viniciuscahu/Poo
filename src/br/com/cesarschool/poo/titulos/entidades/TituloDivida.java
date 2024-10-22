@@ -21,6 +21,7 @@ public class TituloDivida extends Ativo {
 	public double getTaxaJuros() {
 		return taxaJuros;
 	}
+
 	public void setTaxaJuros(double taxaJuros) {
 		this.taxaJuros = taxaJuros;
 	}

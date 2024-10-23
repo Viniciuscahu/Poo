@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class TelaMain extends JFrame {
 
@@ -122,7 +123,16 @@ public class TelaMain extends JFrame {
                 try {
                     int identificador = Integer.parseInt(idField.getText());
                     String nome = nomeField.getText();
-                    LocalDate dataValidade = LocalDate.parse(dataValidadeField.getText()); // Converte o campo para LocalDate
+
+                    // Tentar converter a data, se for inválida, captura a exceção
+                    LocalDate dataValidade;
+                    try {
+                        dataValidade = LocalDate.parse(dataValidadeField.getText());
+                    } catch (DateTimeParseException ex) {
+                        JOptionPane.showMessageDialog(panel, "Data de validade inválida! Use o formato YYYY-MM-DD.");
+                        return; // Sai do método se a data for inválida
+                    }
+
                     double valorUnitario = Double.parseDouble(valorField.getText());
                     String tipo = (String) tipoCombo.getSelectedItem(); // Obtém o tipo selecionado
 
@@ -145,6 +155,8 @@ public class TelaMain extends JFrame {
                         JOptionPane.showMessageDialog(panel, resultado); // Exibe a mensagem de erro
                     }
 
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(panel, "Erro nos dados numéricos! Verifique o identificador e valor unitário.");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(panel, "Erro ao incluir dados: " + ex.getMessage());
                 }
@@ -153,6 +165,7 @@ public class TelaMain extends JFrame {
 
         return panel;
     }
+
 
 
     private JPanel criarTelaBuscar() {

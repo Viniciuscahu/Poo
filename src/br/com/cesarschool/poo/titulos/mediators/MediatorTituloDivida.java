@@ -24,7 +24,7 @@ public class MediatorTituloDivida {
         if (titulo.getNome() == null || titulo.getNome().trim().isEmpty()) {
             return "Nome deve ser preenchido.";
         }
-        if (titulo.getNome().length() < 10 || titulo.getNome().length() > 100) {
+        if (titulo.getNome().length() < 1 || titulo.getNome().length() > 100) {
             return "Nome deve ter entre 10 e 100 caracteres.";
         }
         LocalDate dataAtual = LocalDate.now();

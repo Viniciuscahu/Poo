@@ -15,13 +15,13 @@ public class RepositorioTituloDivida {
 
 	private static final String FILE_NAME = "src/br/com/cesarschool/poo/titulos/repositorios/TituloDivida.txt";
 
-	// Adiciona um novo título
+
 	public boolean adicionarTitulo(TituloDivida titulo) throws IOException {
 		List<TituloDivida> titulos = listarTitulos();
 
 		for (TituloDivida t : titulos) {
 			if (t.getIdentificador() == titulo.getIdentificador()) {
-				return false; // Título já existe
+				return false;
 			}
 		}
 
@@ -32,7 +32,7 @@ public class RepositorioTituloDivida {
 		return true;
 	}
 
-	// Atualiza um título existente
+
 	public boolean atulizarTitulo(TituloDivida titulo) throws IOException {
 		List<TituloDivida> titulos = listarTitulos();
 		boolean encontrado = false;
@@ -53,7 +53,7 @@ public class RepositorioTituloDivida {
 		return true;
 	}
 
-	// Exclui um título pelo identificador
+
 	public boolean excluirTitulo(int identificador) throws IOException {
 		List<TituloDivida> titulos = listarTitulos();
 		boolean encontrado = false;
@@ -74,7 +74,7 @@ public class RepositorioTituloDivida {
 		return true;
 	}
 
-	// Busca um título pelo identificador
+
 	public TituloDivida buscarTitulo(int identificador) throws IOException {
 		List<TituloDivida> titulos = listarTitulos();
 
@@ -84,10 +84,10 @@ public class RepositorioTituloDivida {
 			}
 		}
 
-		return null; // Se não encontrar, retorna null
+		return null;
 	}
 
-	// Lista todos os títulos do arquivo
+
 	private List<TituloDivida> listarTitulos() throws IOException {
 		List<TituloDivida> titulos = new ArrayList<>();
 		File file = new File(FILE_NAME);
@@ -110,7 +110,7 @@ public class RepositorioTituloDivida {
 		return titulos;
 	}
 
-	// Salva todos os títulos no arquivo
+
 	private void salvarTitulos(List<TituloDivida> titulos) throws IOException {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
 			for (TituloDivida titulo : titulos) {
@@ -120,12 +120,12 @@ public class RepositorioTituloDivida {
 		}
 	}
 
-	// Formata um TituloDivida como string para salvar no arquivo
+
 	private String formatTitulo(TituloDivida titulo) {
 		return titulo.getIdentificador() + ";" + titulo.getNome() + ";" + titulo.getDataDeValidade() + ";" + titulo.getTaxaJuros();
 	}
 
-	// Converte uma string lida do arquivo para um objeto TituloDivida
+
 	private TituloDivida parseTitulo(String linha) {
 		String[] partes = linha.split(";");
 		if (partes.length != 4) {

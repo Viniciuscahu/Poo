@@ -22,7 +22,7 @@ public class RepositorioAcao {
 			}
 		}
 
-		// Gravar no arquivo
+
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
 			writer.write(formatAcao(acao));
 			writer.newLine();
@@ -103,7 +103,7 @@ public class RepositorioAcao {
 	}
 
 	private void salvarAcoes(List<Acao> acoes) throws IOException {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, false))) { // Sobrescreve o arquivo
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, false))) {
 			for (Acao acao : acoes) {
 				writer.write(formatAcao(acao));
 				writer.newLine();

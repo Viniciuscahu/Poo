@@ -24,14 +24,14 @@ public class TelaMain extends JFrame {
 
         tabbedPane = new JTabbedPane();
 
-        // Criar as telas de cada operação
+
         JPanel telaOperacao = criarTelaOperacao();
         JPanel telaIncluir = criarTelaIncluir();
         JPanel telaBuscar = criarTelaBuscar();
         JPanel telaExcluir = criarTelaExcluir();
         JPanel telaEditar = criarTelaEditar();
 
-        // Adicionar as telas como abas
+
         tabbedPane.addTab("Realizar Operação", telaOperacao);
         tabbedPane.addTab("Incluir", telaIncluir);
         tabbedPane.addTab("Buscar", telaBuscar);

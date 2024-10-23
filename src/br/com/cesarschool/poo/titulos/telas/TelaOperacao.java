@@ -63,14 +63,14 @@ public class TelaOperacao extends JFrame {
     }
 
     private void realizarOperacao() throws IOException {
-        // Coleta de dados dos campos
+
         String entidadeCredito = (String) comboEntidadeCredito.getSelectedItem();
         String entidadeDebito = (String) comboEntidadeDebito.getSelectedItem();
         String acaoOuTitulo = (String) comboAcaoTitulo.getSelectedItem();
         boolean ehAcao = ehAcaoCheckBox.isSelected();
         double valor = Double.parseDouble(valorField.getText());
 
-        // Chamar método realizarOperacao do MediatorOperacao
+
         MediatorOperacao mediator = MediatorOperacao.getInstancia();
         String resultado = mediator.realizarOperacao(ehAcao, getEntidadeId(entidadeCredito), getEntidadeId(entidadeDebito), getAtivoId(acaoOuTitulo), valor);
 
@@ -78,7 +78,7 @@ public class TelaOperacao extends JFrame {
     }
 
     private int getEntidadeId(String entidadeNome) {
-        // Simulação de mapeamento entre o nome da entidade e o código dela
+
         switch (entidadeNome) {
             case "Entidade 1":
                 return 1;
@@ -92,7 +92,7 @@ public class TelaOperacao extends JFrame {
     }
 
     private int getAtivoId(String ativoNome) {
-        // Simulação de mapeamento entre o nome do ativo e o código dele
+
         switch (ativoNome) {
             case "Ação 1":
                 return 1;

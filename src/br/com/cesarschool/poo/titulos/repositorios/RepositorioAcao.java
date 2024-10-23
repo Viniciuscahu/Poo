@@ -30,7 +30,8 @@ import java.util.*;
  */
 public class RepositorioAcao {
 
-	private static final String FILE_NAME = "Acao.txt";
+	private static final String FILE_NAME = "src/br/com/cesarschool/poo/titulos/repositorios/Acao.txt";
+
 
 
 	public boolean incluir(Acao acao) throws IOException {
@@ -38,16 +39,24 @@ public class RepositorioAcao {
 
 		for (Acao a : acoes) {
 			if (a.getIdentificador() == acao.getIdentificador()) {
+				System.out.println("Ação com o mesmo identificador já existe.");
 				return false;
 			}
 		}
 
+		// Gravar no arquivo
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
 			writer.write(formatAcao(acao));
 			writer.newLine();
+			System.out.println("Ação incluída com sucesso no arquivo.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
 		}
+
 		return true;
 	}
+
 
 
 	public boolean alterar(Acao acao) throws IOException {
@@ -100,6 +109,7 @@ public class RepositorioAcao {
 		List<Acao> acoes = new ArrayList<>();
 		Path path = Paths.get(FILE_NAME);
 		if (!Files.exists(path)) {
+			System.out.println("Arquivo não encontrado, lista vazia.");
 			return acoes;
 		}
 		try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
@@ -115,7 +125,7 @@ public class RepositorioAcao {
 	}
 
 	private void salvarAcoes(List<Acao> acoes) throws IOException {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, false))) { // Sobrescreve o arquivo
 			for (Acao acao : acoes) {
 				writer.write(formatAcao(acao));
 				writer.newLine();

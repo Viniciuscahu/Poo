@@ -90,49 +90,70 @@ public class TelaMain extends JFrame {
     }
 
     private JPanel criarTelaIncluir() {
-        JPanel panel = new JPanel(new GridLayout(4, 2));
+        JPanel panel = new JPanel(new GridLayout(6, 2));
 
-        JTextField nomeField = new JTextField();
-        JTextField taxaOuValorField = new JTextField();
-        JComboBox<String> tipoAtivoCombo = new JComboBox<>(new String[]{"Ação", "Título de Dívida"});
+        JTextField idField = new JTextField(); // Campo para o identificador
+        JTextField nomeField = new JTextField(); // Campo para o nome
+        JTextField dataValidadeField = new JTextField(); // Campo para a data de validade
+        JTextField valorField = new JTextField(); // Campo para o valor unitário
+        JComboBox<String> tipoCombo = new JComboBox<>(new String[]{"Ação", "Título de Dívida"}); // Campo para o tipo
         JButton incluirButton = new JButton("Incluir");
+
+        panel.add(new JLabel("Identificador:"));
+        panel.add(idField);
 
         panel.add(new JLabel("Nome:"));
         panel.add(nomeField);
 
-        panel.add(new JLabel("Taxa ou Valor:"));
-        panel.add(taxaOuValorField);
+        panel.add(new JLabel("Data de Validade (YYYY-MM-DD):"));
+        panel.add(dataValidadeField);
 
-        panel.add(new JLabel("Tipo:"));
-        panel.add(tipoAtivoCombo);
+        panel.add(new JLabel("Valor Unitário:"));
+        panel.add(valorField);
+
+        panel.add(new JLabel("Tipo:")); // Novo campo para escolher entre Ação e Título de Dívida
+        panel.add(tipoCombo);
 
         panel.add(incluirButton);
 
         incluirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String nome = nomeField.getText();
-                String tipo = (String) tipoAtivoCombo.getSelectedItem();
-                double taxaOuValor = Double.parseDouble(taxaOuValorField.getText());
+                try {
+                    int identificador = Integer.parseInt(idField.getText());
+                    String nome = nomeField.getText();
+                    LocalDate dataValidade = LocalDate.parse(dataValidadeField.getText()); // Converte o campo para LocalDate
+                    double valorUnitario = Double.parseDouble(valorField.getText());
+                    String tipo = (String) tipoCombo.getSelectedItem(); // Obtém o tipo selecionado
 
-                if (tipo.equals("Ação")) {
-                    Acao acao = new Acao(1, nome, LocalDate.now().plusDays(365), taxaOuValor);
-                    try {
-                        MediatorAcao.getInstancia().incluir(acao);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                    // Verificar se é Ação ou Título de Dívida e incluir
+                    String resultado;
+                    if (tipo.equals("Ação")) {
+                        // Criar a ação com os dados fornecidos
+                        Acao acao = new Acao(identificador, nome, dataValidade, valorUnitario);
+                        resultado = MediatorAcao.getInstancia().incluir(acao);
+                    } else {
+                        // Criar o título de dívida com os dados fornecidos
+                        TituloDivida tituloDivida = new TituloDivida(identificador, nome, dataValidade, valorUnitario);
+                        resultado = MediatorTituloDivida.getInstancia().incluir(tituloDivida);
                     }
-                } else {
-                    TituloDivida titulo = new TituloDivida(1, nome, LocalDate.now().plusDays(365), taxaOuValor);
-                    MediatorTituloDivida.getInstancia().incluir(titulo);
-                }
 
-                JOptionPane.showMessageDialog(panel, "Inclusão realizada com sucesso!");
+                    // Verificar se a inclusão foi bem-sucedida ou não
+                    if (resultado == null) {
+                        JOptionPane.showMessageDialog(panel, tipo + " incluído(a) com sucesso!");
+                    } else {
+                        JOptionPane.showMessageDialog(panel, resultado); // Exibe a mensagem de erro
+                    }
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(panel, "Erro ao incluir dados: " + ex.getMessage());
+                }
             }
         });
 
         return panel;
     }
+
 
     private JPanel criarTelaBuscar() {
         JPanel panel = new JPanel(new GridLayout(4, 2));

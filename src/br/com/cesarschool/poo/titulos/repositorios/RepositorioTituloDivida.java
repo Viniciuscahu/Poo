@@ -34,117 +34,131 @@ import java.util.List;
  * objeto. Caso o identificador n�o seja encontrado no arquivo, retornar null.   
  */
 public class RepositorioTituloDivida {
-	Path arquivo = Paths.get("TituloDivida.txt");
 
-	public boolean adicionarTitulo(TituloDivida novoTitulo) {
-		try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-			String linha;
-			while ((linha = reader.readLine()) != null) {
-				String[] informacoesTitulo = linha.split(";");
+	private static final String FILE_NAME = "src/br/com/cesarschool/poo/titulos/repositorios/TituloDivida.txt";
 
-				if (informacoesTitulo[0].equals((String.valueOf(novoTitulo.getIdentificador())))) {
-					return false;
-				}
+	// Adiciona um novo título
+	public boolean adicionarTitulo(TituloDivida titulo) throws IOException {
+		List<TituloDivida> titulos = listarTitulos();
+
+		for (TituloDivida t : titulos) {
+			if (t.getIdentificador() == titulo.getIdentificador()) {
+				return false; // Título já existe
 			}
-		} catch (IOException e) {
-			return false;
 		}
-		try (BufferedWriter writer = new BufferedWriter((new FileWriter(arquivo.toFile(), true)))) {
-			writer.write(novoTitulo.getIdentificador() + ";" + novoTitulo.getNome() + ";" + novoTitulo.getDataDeValidade() + ";" + novoTitulo.getTaxaJuros());
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+			writer.write(formatTitulo(titulo));
 			writer.newLine();
-			return true;
-		} catch (IOException e) {
+		}
+		return true;
+	}
+
+	// Atualiza um título existente
+	public boolean atulizarTitulo(TituloDivida titulo) throws IOException {
+		List<TituloDivida> titulos = listarTitulos();
+		boolean encontrado = false;
+
+		for (int i = 0; i < titulos.size(); i++) {
+			if (titulos.get(i).getIdentificador() == titulo.getIdentificador()) {
+				titulos.set(i, titulo);
+				encontrado = true;
+				break;
+			}
+		}
+
+		if (!encontrado) {
 			return false;
+		}
+
+		salvarTitulos(titulos);
+		return true;
+	}
+
+	// Exclui um título pelo identificador
+	public boolean excluirTitulo(int identificador) throws IOException {
+		List<TituloDivida> titulos = listarTitulos();
+		boolean encontrado = false;
+
+		for (int i = 0; i < titulos.size(); i++) {
+			if (titulos.get(i).getIdentificador() == identificador) {
+				titulos.remove(i);
+				encontrado = true;
+				break;
+			}
+		}
+
+		if (!encontrado) {
+			return false;
+		}
+
+		salvarTitulos(titulos);
+		return true;
+	}
+
+	// Busca um título pelo identificador
+	public TituloDivida buscarTitulo(int identificador) throws IOException {
+		List<TituloDivida> titulos = listarTitulos();
+
+		for (TituloDivida titulo : titulos) {
+			if (titulo.getIdentificador() == identificador) {
+				return titulo;
+			}
+		}
+
+		return null; // Se não encontrar, retorna null
+	}
+
+	// Lista todos os títulos do arquivo
+	private List<TituloDivida> listarTitulos() throws IOException {
+		List<TituloDivida> titulos = new ArrayList<>();
+		File file = new File(FILE_NAME);
+
+		if (!file.exists()) {
+			return titulos;
+		}
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			String linha;
+
+			while ((linha = reader.readLine()) != null) {
+				TituloDivida titulo = parseTitulo(linha);
+				if (titulo != null) {
+					titulos.add(titulo);
+				}
+			}
+		}
+
+		return titulos;
+	}
+
+	// Salva todos os títulos no arquivo
+	private void salvarTitulos(List<TituloDivida> titulos) throws IOException {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+			for (TituloDivida titulo : titulos) {
+				writer.write(formatTitulo(titulo));
+				writer.newLine();
+			}
 		}
 	}
 
-
-	public boolean atulizarTitulo(TituloDivida tituloAtualizado) {
-		List<String> informacoesAtualizadas = new ArrayList<>();
-		boolean encontrouTitulo = false;
-
-		try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-			String linha;
-			while ((linha = reader.readLine()) != null) {
-				String[] informacoesTitulo = linha.split(";");
-				if (informacoesTitulo[0].equals((String.valueOf(tituloAtualizado.getIdentificador())))) {
-					informacoesAtualizadas.add(tituloAtualizado.getIdentificador() + ";" + tituloAtualizado.getNome() + ";" + tituloAtualizado.getDataDeValidade() + ";" + tituloAtualizado.getTaxaJuros());
-					encontrouTitulo = true;
-				} else {
-					informacoesAtualizadas.add(linha);
-				}
-			}
-		} catch (Exception e) {
-			return false;
-		}
-
-		if (encontrouTitulo) {
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile()))) {
-				for (String linha : informacoesAtualizadas) {
-					writer.write(linha);
-					writer.newLine();
-				}
-				return true;
-
-			} catch (Exception e) {
-				return false;
-			}
-		} else {
-			return false;
-		}
+	// Formata um TituloDivida como string para salvar no arquivo
+	private String formatTitulo(TituloDivida titulo) {
+		return titulo.getIdentificador() + ";" + titulo.getNome() + ";" + titulo.getDataDeValidade() + ";" + titulo.getTaxaJuros();
 	}
 
-
-	public boolean excluirTitulo(int identificador) {
-
-		List<String> linhasRestantes = new ArrayList<>();
-		boolean tituloRemovido = false;
-		try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-			String linha;
-			while ((linha = reader.readLine()) != null) {
-				String[] informacoesTitulo = linha.split(";");
-				if (informacoesTitulo[0].equals((String.valueOf(identificador)))) {
-					linhasRestantes.add(linha);
-				} else {
-					tituloRemovido = true;
-				}
-			}
-		} catch (IOException e) {
-			return false;
+	// Converte uma string lida do arquivo para um objeto TituloDivida
+	private TituloDivida parseTitulo(String linha) {
+		String[] partes = linha.split(";");
+		if (partes.length != 4) {
+			return null;
 		}
-		if (tituloRemovido) {
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo.toFile()))) {
-				for (String linha : linhasRestantes) {
-					writer.write(linha);
-					writer.newLine();
-				}
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
 
+		int identificador = Integer.parseInt(partes[0]);
+		String nome = partes[1];
+		LocalDate dataDeValidade = LocalDate.parse(partes[2]);
+		double taxaJuros = Double.parseDouble(partes[3]);
 
-	public TituloDivida buscarTitulo(int identificador) {
-		try (BufferedReader reader = new BufferedReader(new FileReader(arquivo.toFile()))) {
-			String linha;
-			while ((linha = reader.readLine()) != null) {
-				String[] informacoesTitulo = linha.split(";");
-				if (informacoesTitulo[0].equals(String.valueOf(identificador))) {
-					return new TituloDivida(
-							Integer.parseInt(informacoesTitulo[0]),
-							informacoesTitulo[1],
-							LocalDate.parse(informacoesTitulo[2]),
-							Double.parseDouble(informacoesTitulo[3])
-					);
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return new TituloDivida(identificador, nome, dataDeValidade, taxaJuros);
 	}
 }

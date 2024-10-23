@@ -27,8 +27,8 @@ public class MediatorAcao {
         if (acao.getNome() == null || acao.getNome().trim().isEmpty()) {
             return "Nome deve ser preenchido.";
         }
-        if (acao.getNome().length() < 10 || acao.getNome().length() > 100) {
-            return "Nome deve ter entre 10 e 100 caracteres.";
+        if (acao.getNome().length() < 1|| acao.getNome().length() > 100) {
+            return "Nome deve ter entre 1 e 100 caracteres.";
         }
         LocalDate dataAtual = LocalDate.now();
         if (acao.getDataDeValidade().isBefore(dataAtual.plusDays(30))) {

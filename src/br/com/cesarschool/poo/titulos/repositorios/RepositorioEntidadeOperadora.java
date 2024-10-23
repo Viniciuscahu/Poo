@@ -3,12 +3,13 @@ import br.com.cesarschool.poo.titulos.entidades.EntidadeOperadora;
 
 import java.io.*;
 import java.nio.file.*;
+import java.time.LocalDate;
 import java.util.*;
 
 
 public class RepositorioEntidadeOperadora {
 
-    private static final String FILE_NAME = "EntidadeOperadora.txt";
+    private static final String FILE_NAME = "src/br/com/cesarschool/poo/titulos/repositorios/EntidadeOperadora.txt";
 
     public boolean incluir(EntidadeOperadora entidade) throws IOException {
         List<EntidadeOperadora> entidades = listarEntidades();
@@ -101,20 +102,19 @@ public class RepositorioEntidadeOperadora {
     }
 
     private String formatEntidade(EntidadeOperadora entidade) {
-        return entidade.getIdentificador() + ";" + entidade.getNome() + ";" + entidade.getAutorizadoAcao() + ";" +
-                entidade.getSaldoAcao() + ";" + entidade.getSaldoTituloDivida();
+        return entidade.getIdentificador() + ";" + entidade.getNome() + ";" +
+                entidade.getDataValidade() + ";" + entidade.getValorUnitario();
     }
 
     private EntidadeOperadora parseEntidade(String linha) {
         String[] partes = linha.split(";");
-        if (partes.length != 5) {
+        if (partes.length != 4) {
             return null;
         }
         long identificador = Long.parseLong(partes[0]);
         String nome = partes[1];
-        boolean autorizadoAcao = Boolean.parseBoolean(partes[2]);
-        double saldoAcao = Double.parseDouble(partes[3]);
-        double saldoTituloDivida = Double.parseDouble(partes[4]);
-        return new EntidadeOperadora(identificador, nome, autorizadoAcao);
+        LocalDate dataValidade = LocalDate.parse(partes[2]);
+        double valorUnitario = Double.parseDouble(partes[3]);
+        return new EntidadeOperadora(identificador, nome, false, dataValidade, valorUnitario);
     }
 }

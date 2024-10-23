@@ -1,9 +1,8 @@
 package br.com.cesarschool.poo.titulos.mediators;
-
 import br.com.cesarschool.poo.titulos.entidades.EntidadeOperadora;
 import br.com.cesarschool.poo.titulos.repositorios.RepositorioEntidadeOperadora;
-
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class MediatorEntidadeOperadora {
 
@@ -20,14 +19,20 @@ public class MediatorEntidadeOperadora {
     }
 
     private String validar(EntidadeOperadora entidade) {
-        if (entidade.getIdentificador() <= 100 || entidade.getIdentificador() >= 1000000) {
-            return "Identificador deve estar entre 100 e 1000000.";
+        if (entidade.getIdentificador() <= 0 || entidade.getIdentificador() >= 100000) {
+            return "Identificador deve ser maior que zero e menor que 100000.";
         }
         if (entidade.getNome() == null || entidade.getNome().trim().isEmpty()) {
-            return "Nome deve ser preenchido.";
+            return "Nome deve ser preenchido e não pode ser nulo ou vazio.";
         }
         if (entidade.getNome().length() < 5 || entidade.getNome().length() > 60) {
             return "Nome deve ter entre 5 e 60 caracteres.";
+        }
+        if (entidade.getDataValidade().isBefore(LocalDate.now().plusDays(180))) {
+            return "Data de validade deve ser maior que a data atual mais 180 dias.";
+        }
+        if (entidade.getValorUnitario() <= 0) {
+            return "Valor unitário deve ser maior que zero.";
         }
         return null;
     }
@@ -67,9 +72,10 @@ public class MediatorEntidadeOperadora {
             return "Erro de I/O ao alterar a entidade.";
         }
     }
-    public String excluir(long identificador) {
-        if (identificador <= 100 || identificador >= 1000000) {
-            return "Identificador deve estar entre 100 e 1000000.";
+
+    public String excluir(int identificador) {
+        if (identificador <= 0 || identificador >= 100000) {
+            return "Identificador deve ser maior que zero e menor que 100000.";
         }
         try {
             boolean excluido = repositorioEntidadeOperadora.excluir(identificador);
@@ -84,8 +90,8 @@ public class MediatorEntidadeOperadora {
         }
     }
 
-    public EntidadeOperadora buscar(long identificador) {
-        if (identificador <= 100 || identificador >= 1000000) {
+    public EntidadeOperadora buscar(int identificador) {
+        if (identificador <= 0 || identificador >= 100000) {
             return null;
         }
         try {

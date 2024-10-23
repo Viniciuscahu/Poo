@@ -1,5 +1,7 @@
 package br.com.cesarschool.poo.titulos.entidades;
 
+import java.time.LocalDate;
+
 public class EntidadeOperadora {
 
     private final long identificador;
@@ -7,13 +9,17 @@ public class EntidadeOperadora {
     private boolean autorizadoAcao;
     private double saldoAcao;
     private double saldoTituloDivida;
+    private LocalDate dataValidade;
+    private double valorUnitario;
 
-    public EntidadeOperadora(long identificador, String nome, boolean autorizadoAcao) {
+    public EntidadeOperadora(long identificador, String nome, boolean autorizadoAcao, LocalDate dataValidade, double valorUnitario) {
         this.identificador = identificador;
         this.nome = nome;
-        this.autorizadoAcao = false;
+        this.autorizadoAcao = autorizadoAcao;
         this.saldoAcao = 0;
         this.saldoTituloDivida = 0;
+        this.dataValidade = dataValidade;
+        this.valorUnitario = valorUnitario;
     }
 
     public long getIdentificador() {
@@ -66,5 +72,21 @@ public class EntidadeOperadora {
         if (valor > 0 && valor <= this.saldoTituloDivida) {
             this.saldoTituloDivida -= valor;
         }
+    }
+
+    public LocalDate getDataValidade() {
+        return dataValidade;
+    }
+
+    public void setDataValidade(LocalDate dataValidade) {
+        this.dataValidade = dataValidade;
+    }
+
+    public double getValorUnitario() {
+        return valorUnitario;
+    }
+
+    public void setValorUnitario(double valorUnitario) {
+        this.valorUnitario = valorUnitario;
     }
 }

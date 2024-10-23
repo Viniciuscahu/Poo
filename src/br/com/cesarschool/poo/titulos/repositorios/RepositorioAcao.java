@@ -22,7 +22,6 @@ public class RepositorioAcao {
 			}
 		}
 
-
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
 			writer.write(formatAcao(acao));
 			writer.newLine();

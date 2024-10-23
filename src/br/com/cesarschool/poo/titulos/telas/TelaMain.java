@@ -43,7 +43,10 @@ public class TelaMain extends JFrame {
     }
 
     private JPanel criarTelaOperacao() {
-        JPanel panel = new JPanel(new GridLayout(6, 2));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
         JComboBox<String> comboEntidadeCredito = new JComboBox<>(new String[]{"Entidade 1", "Entidade 2", "Entidade 3"});
         JComboBox<String> comboEntidadeDebito = new JComboBox<>(new String[]{"Entidade 1", "Entidade 2", "Entidade 3"});
@@ -52,38 +55,59 @@ public class TelaMain extends JFrame {
         JCheckBox ehAcaoCheckBox = new JCheckBox("É Ação");
         JButton realizarOperacaoButton = new JButton("Realizar Operação");
 
-        panel.add(new JLabel("Entidade Crédito:"));
-        panel.add(comboEntidadeCredito);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Entidade Crédito:"), gbc);
+        gbc.gridx = 1;
+        panel.add(comboEntidadeCredito, gbc);
 
-        panel.add(new JLabel("Entidade Débito:"));
-        panel.add(comboEntidadeDebito);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("Entidade Débito:"), gbc);
+        gbc.gridx = 1;
+        panel.add(comboEntidadeDebito, gbc);
 
-        panel.add(new JLabel("Ação/Título:"));
-        panel.add(comboAcaoTitulo);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(new JLabel("Ação/Título:"), gbc);
+        gbc.gridx = 1;
+        panel.add(comboAcaoTitulo, gbc);
 
-        panel.add(new JLabel("Valor:"));
-        panel.add(valorField);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(new JLabel("Valor:"), gbc);
+        gbc.gridx = 1;
+        panel.add(valorField, gbc);
 
-        panel.add(ehAcaoCheckBox);
-        panel.add(realizarOperacaoButton);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        panel.add(ehAcaoCheckBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        panel.add(realizarOperacaoButton, gbc);
 
         realizarOperacaoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String entidadeCredito = (String) comboEntidadeCredito.getSelectedItem();
-                String entidadeDebito = (String) comboEntidadeDebito.getSelectedItem();
-                String acaoOuTitulo = (String) comboAcaoTitulo.getSelectedItem();
-                boolean ehAcao = ehAcaoCheckBox.isSelected();
-                double valor = Double.parseDouble(valorField.getText());
-
-                MediatorOperacao mediator = MediatorOperacao.getInstancia();
-                String resultado = null;
                 try {
-                    resultado = mediator.realizarOperacao(ehAcao, getEntidadeId(entidadeCredito), getEntidadeId(entidadeDebito), getAtivoId(acaoOuTitulo), valor);
+                    String entidadeCredito = (String) comboEntidadeCredito.getSelectedItem();
+                    String entidadeDebito = (String) comboEntidadeDebito.getSelectedItem();
+                    String acaoOuTitulo = (String) comboAcaoTitulo.getSelectedItem();
+                    boolean ehAcao = ehAcaoCheckBox.isSelected();
+                    double valor = Double.parseDouble(valorField.getText());
+
+                    MediatorOperacao mediator = MediatorOperacao.getInstancia();
+                    String resultado = mediator.realizarOperacao(ehAcao, getEntidadeId(entidadeCredito), getEntidadeId(entidadeDebito), getAtivoId(acaoOuTitulo), valor);
+
+                    JOptionPane.showMessageDialog(panel, resultado == null ? "Operação realizada com sucesso!" : resultado);
+
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(panel, "Erro no formato de valor! Certifique-se de inserir um número válido.");
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(panel, "Erro ao realizar a operação: " + ex.getMessage());
                 }
-                JOptionPane.showMessageDialog(panel, resultado == null ? "Operação realizada com sucesso!" : resultado);
             }
         });
 
@@ -91,31 +115,52 @@ public class TelaMain extends JFrame {
     }
 
     private JPanel criarTelaIncluir() {
-        JPanel panel = new JPanel(new GridLayout(6, 2));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        JTextField idField = new JTextField(); // Campo para o identificador
-        JTextField nomeField = new JTextField(); // Campo para o nome
-        JTextField dataValidadeField = new JTextField(); // Campo para a data de validade
-        JTextField valorField = new JTextField(); // Campo para o valor unitário
-        JComboBox<String> tipoCombo = new JComboBox<>(new String[]{"Ação", "Título de Dívida"}); // Campo para o tipo
+        JTextField idField = new JTextField();
+        JTextField nomeField = new JTextField();
+        JTextField dataValidadeField = new JTextField();
+        JTextField valorField = new JTextField();
+        JComboBox<String> tipoCombo = new JComboBox<>(new String[]{"Ação", "Título de Dívida"});
         JButton incluirButton = new JButton("Incluir");
 
-        panel.add(new JLabel("Identificador:"));
-        panel.add(idField);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Identificador:"), gbc);
+        gbc.gridx = 1;
+        panel.add(idField, gbc);
 
-        panel.add(new JLabel("Nome:"));
-        panel.add(nomeField);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("Nome:"), gbc);
+        gbc.gridx = 1;
+        panel.add(nomeField, gbc);
 
-        panel.add(new JLabel("Data de Validade (YYYY-MM-DD):"));
-        panel.add(dataValidadeField);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(new JLabel("Data de Validade (YYYY-MM-DD):"), gbc);
+        gbc.gridx = 1;
+        panel.add(dataValidadeField, gbc);
 
-        panel.add(new JLabel("Valor Unitário:"));
-        panel.add(valorField);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(new JLabel("Valor Unitário:"), gbc);
+        gbc.gridx = 1;
+        panel.add(valorField, gbc);
 
-        panel.add(new JLabel("Tipo:")); // Novo campo para escolher entre Ação e Título de Dívida
-        panel.add(tipoCombo);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        panel.add(new JLabel("Tipo:"), gbc);
+        gbc.gridx = 1;
+        panel.add(tipoCombo, gbc);
 
-        panel.add(incluirButton);
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        panel.add(incluirButton, gbc);
 
         incluirButton.addActionListener(new ActionListener() {
             @Override
@@ -124,35 +169,30 @@ public class TelaMain extends JFrame {
                     int identificador = Integer.parseInt(idField.getText());
                     String nome = nomeField.getText();
 
-                    // Tentar converter a data, se for inválida, captura a exceção
                     LocalDate dataValidade;
                     try {
                         dataValidade = LocalDate.parse(dataValidadeField.getText());
                     } catch (DateTimeParseException ex) {
                         JOptionPane.showMessageDialog(panel, "Data de validade inválida! Use o formato YYYY-MM-DD.");
-                        return; // Sai do método se a data for inválida
+                        return;
                     }
 
                     double valorUnitario = Double.parseDouble(valorField.getText());
-                    String tipo = (String) tipoCombo.getSelectedItem(); // Obtém o tipo selecionado
+                    String tipo = (String) tipoCombo.getSelectedItem();
 
-                    // Verificar se é Ação ou Título de Dívida e incluir
                     String resultado;
                     if (tipo.equals("Ação")) {
-                        // Criar a ação com os dados fornecidos
                         Acao acao = new Acao(identificador, nome, dataValidade, valorUnitario);
                         resultado = MediatorAcao.getInstancia().incluir(acao);
                     } else {
-                        // Criar o título de dívida com os dados fornecidos
                         TituloDivida tituloDivida = new TituloDivida(identificador, nome, dataValidade, valorUnitario);
                         resultado = MediatorTituloDivida.getInstancia().incluir(tituloDivida);
                     }
 
-                    // Verificar se a inclusão foi bem-sucedida ou não
                     if (resultado == null) {
                         JOptionPane.showMessageDialog(panel, tipo + " incluído(a) com sucesso!");
                     } else {
-                        JOptionPane.showMessageDialog(panel, resultado); // Exibe a mensagem de erro
+                        JOptionPane.showMessageDialog(panel, resultado);
                     }
 
                 } catch (NumberFormatException ex) {
@@ -166,42 +206,77 @@ public class TelaMain extends JFrame {
         return panel;
     }
 
-
-
     private JPanel criarTelaBuscar() {
-        JPanel panel = new JPanel(new GridLayout(4, 2));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
         JComboBox<String> tipoAtivoCombo = new JComboBox<>(new String[]{"Ação", "Título de Dívida"});
         JTextField idField = new JTextField();
         JButton buscarButton = new JButton("Buscar");
-        JTextArea resultadoArea = new JTextArea();
+        JTextArea resultadoArea = new JTextArea(5, 20);
+        resultadoArea.setLineWrap(true);
+        resultadoArea.setWrapStyleWord(true);
+        resultadoArea.setEditable(false);
 
-        panel.add(new JLabel("Tipo:"));
-        panel.add(tipoAtivoCombo);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Tipo:"), gbc);
+        gbc.gridx = 1;
+        panel.add(tipoAtivoCombo, gbc);
 
-        panel.add(new JLabel("ID:"));
-        panel.add(idField);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("ID:"), gbc);
+        gbc.gridx = 1;
+        panel.add(idField, gbc);
 
-        panel.add(buscarButton);
-        panel.add(resultadoArea);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        panel.add(buscarButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        JScrollPane scrollPane = new JScrollPane(resultadoArea);
+        panel.add(scrollPane, gbc);
 
         buscarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String tipo = (String) tipoAtivoCombo.getSelectedItem();
-                int id = Integer.parseInt(idField.getText());
+                try {
+                    String tipo = (String) tipoAtivoCombo.getSelectedItem();
+                    int id = Integer.parseInt(idField.getText());
 
-                if (tipo.equals("Ação")) {
-                    Acao acao = null;
-                    try {
-                        acao = MediatorAcao.getInstancia().buscar(id);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                    if (tipo.equals("Ação")) {
+                        Acao acao = MediatorAcao.getInstancia().buscar(id);
+                        if (acao != null) {
+                            resultadoArea.setText("Nome: " + acao.getNome() + "\n"
+                                    + "Data de Validade: " + acao.getDataDeValidade().toString() + "\n"
+                                    + "Valor Unitário: " + acao.getValorUnitario());
+                        } else {
+                            resultadoArea.setText("Ação não encontrada.");
+                        }
+                    } else {
+                        TituloDivida titulo = MediatorTituloDivida.getInstancia().buscar(id);
+                        if (titulo != null) {
+                            resultadoArea.setText("Nome: " + titulo.getNome() + "\n"
+                                    + "Data de Validade: " + titulo.getDataDeValidade().toString() + "\n"
+                                    + "Taxa de Juros: " + titulo.getTaxaJuros());
+                        } else {
+                            resultadoArea.setText("Título não encontrado.");
+                        }
                     }
-                    resultadoArea.setText(acao != null ? acao.getNome() : "Ação não encontrada");
-                } else {
-                    TituloDivida titulo = MediatorTituloDivida.getInstancia().buscar(id);
-                    resultadoArea.setText(titulo != null ? titulo.getNome() : "Título não encontrado");
+
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(panel, "ID inválido. Por favor, insira um número válido.");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(panel, "Erro ao buscar os dados: " + ex.getMessage());
                 }
             }
         });
@@ -210,37 +285,50 @@ public class TelaMain extends JFrame {
     }
 
     private JPanel criarTelaExcluir() {
-        JPanel panel = new JPanel(new GridLayout(3, 2));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
         JComboBox<String> tipoAtivoCombo = new JComboBox<>(new String[]{"Ação", "Título de Dívida"});
         JTextField idField = new JTextField();
         JButton excluirButton = new JButton("Excluir");
 
-        panel.add(new JLabel("Tipo:"));
-        panel.add(tipoAtivoCombo);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Tipo:"), gbc);
+        gbc.gridx = 1;
+        panel.add(tipoAtivoCombo, gbc);
 
-        panel.add(new JLabel("ID:"));
-        panel.add(idField);
-
-        panel.add(excluirButton);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("ID:"), gbc);
+        gbc.gridx = 1;
+        panel.add(idField, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        panel.add(excluirButton, gbc);
 
         excluirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String tipo = (String) tipoAtivoCombo.getSelectedItem();
-                int id = Integer.parseInt(idField.getText());
+                try {
+                    String tipo = (String) tipoAtivoCombo.getSelectedItem();
+                    int id = Integer.parseInt(idField.getText());
 
-                if (tipo.equals("Ação")) {
-                    String resultado = null;
-                    try {
+                    String resultado;
+                    if (tipo.equals("Ação")) {
                         resultado = MediatorAcao.getInstancia().excluir(id);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                    } else {
+                        resultado = MediatorTituloDivida.getInstancia().excluir(id);
                     }
-                    JOptionPane.showMessageDialog(panel, resultado == null ? "Ação excluída com sucesso!" : resultado);
-                } else {
-                    String resultado = MediatorTituloDivida.getInstancia().excluir(id);
-                    JOptionPane.showMessageDialog(panel, resultado == null ? "Título excluído com sucesso!" : resultado);
+                    JOptionPane.showMessageDialog(panel, resultado == null ? tipo + " excluído(a) com sucesso!" : resultado);
+
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(panel, "Por favor, insira um número válido para o ID.");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(panel, "Erro ao tentar excluir o item: " + ex.getMessage());
                 }
             }
         });
@@ -249,29 +337,59 @@ public class TelaMain extends JFrame {
     }
 
     private JPanel criarTelaEditar() {
-        JPanel panel = new JPanel(new GridLayout(6, 2));
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
         JComboBox<String> tipoAtivoCombo = new JComboBox<>(new String[]{"Ação", "Título de Dívida"});
         JTextField idField = new JTextField();
         JTextField nomeField = new JTextField();
         JTextField valorField = new JTextField();
+        JTextField dataValidadeField = new JTextField();
         JButton buscarButton = new JButton("Buscar");
         JButton editarButton = new JButton("Atualizar");
 
-        panel.add(new JLabel("Tipo:"));
-        panel.add(tipoAtivoCombo);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Tipo:"), gbc);
+        gbc.gridx = 1;
+        panel.add(tipoAtivoCombo, gbc);
 
-        panel.add(new JLabel("ID:"));
-        panel.add(idField);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("ID:"), gbc);
+        gbc.gridx = 1;
+        panel.add(idField, gbc);
 
-        panel.add(buscarButton);
-        panel.add(new JLabel("Nome:"));
-        panel.add(nomeField);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        panel.add(buscarButton, gbc);
 
-        panel.add(new JLabel("Valor/Taxa:"));
-        panel.add(valorField);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 1;
+        panel.add(new JLabel("Nome:"), gbc);
+        gbc.gridx = 1;
+        panel.add(nomeField, gbc);
 
-        panel.add(editarButton);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        panel.add(new JLabel("Valor/Taxa:"), gbc);
+        gbc.gridx = 1;
+        panel.add(valorField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        panel.add(new JLabel("Data de Validade (YYYY-MM-DD):"), gbc);
+        gbc.gridx = 1;
+        panel.add(dataValidadeField, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        panel.add(editarButton, gbc);
 
         buscarButton.addActionListener(new ActionListener() {
             @Override
@@ -289,6 +407,7 @@ public class TelaMain extends JFrame {
                     if (acao != null) {
                         nomeField.setText(acao.getNome());
                         valorField.setText(String.valueOf(acao.getValorUnitario()));
+                        dataValidadeField.setText(acao.getDataDeValidade().toString());
                     } else {
                         JOptionPane.showMessageDialog(panel, "Ação não encontrada");
                     }
@@ -297,6 +416,7 @@ public class TelaMain extends JFrame {
                     if (titulo != null) {
                         nomeField.setText(titulo.getNome());
                         valorField.setText(String.valueOf(titulo.getTaxaJuros()));
+                        dataValidadeField.setText(titulo.getDataDeValidade().toString());
                     } else {
                         JOptionPane.showMessageDialog(panel, "Título não encontrado");
                     }
@@ -312,8 +432,16 @@ public class TelaMain extends JFrame {
                 String nome = nomeField.getText();
                 double valor = Double.parseDouble(valorField.getText());
 
+                LocalDate dataValidade;
+                try {
+                    dataValidade = LocalDate.parse(dataValidadeField.getText());
+                } catch (DateTimeParseException ex) {
+                    JOptionPane.showMessageDialog(panel, "Data de validade inválida! Use o formato YYYY-MM-DD.");
+                    return;
+                }
+
                 if (tipo.equals("Ação")) {
-                    Acao acao = new Acao(id, nome, LocalDate.now().plusDays(365), valor);
+                    Acao acao = new Acao(id, nome, dataValidade, valor);
                     String resultado = null;
                     try {
                         resultado = MediatorAcao.getInstancia().alterar(acao);
@@ -322,7 +450,7 @@ public class TelaMain extends JFrame {
                     }
                     JOptionPane.showMessageDialog(panel, resultado == null ? "Ação atualizada com sucesso!" : resultado);
                 } else {
-                    TituloDivida titulo = new TituloDivida(id, nome, LocalDate.now().plusDays(365), valor);
+                    TituloDivida titulo = new TituloDivida(id, nome, dataValidade, valor);
                     String resultado = MediatorTituloDivida.getInstancia().alterar(titulo);
                     JOptionPane.showMessageDialog(panel, resultado == null ? "Título atualizado com sucesso!" : resultado);
                 }
@@ -360,7 +488,4 @@ public class TelaMain extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        new TelaMain();
-    }
 }

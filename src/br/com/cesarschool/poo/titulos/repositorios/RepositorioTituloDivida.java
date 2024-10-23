@@ -1,20 +1,16 @@
 package br.com.cesarschool.poo.titulos.repositorios;
 
-import br.com.cesarschool.poo.titulos.entidades.Acao;
 import br.com.cesarschool.poo.titulos.entidades.TituloDivida;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class RepositorioTituloDivida {
 
 	private static final String FILE_NAME = "src/br/com/cesarschool/poo/titulos/repositorios/TituloDivida.txt";
-
 
 	public boolean adicionarTitulo(TituloDivida titulo) throws IOException {
 		List<TituloDivida> titulos = listarTitulos();
@@ -31,7 +27,6 @@ public class RepositorioTituloDivida {
 		}
 		return true;
 	}
-
 
 	public boolean atulizarTitulo(TituloDivida titulo) throws IOException {
 		List<TituloDivida> titulos = listarTitulos();
@@ -73,7 +68,6 @@ public class RepositorioTituloDivida {
 		salvarTitulos(titulos);
 		return true;
 	}
-
 
 	public TituloDivida buscarTitulo(int identificador) throws IOException {
 		List<TituloDivida> titulos = listarTitulos();
